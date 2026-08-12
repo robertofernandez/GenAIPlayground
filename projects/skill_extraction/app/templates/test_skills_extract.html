@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Skills Extraction</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; background: #f8f9fa; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: #333; }
+        input, textarea { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+        input:focus, textarea:focus { border-color: #007bff; outline: none; }
+        textarea { height: 200px; font-family: monospace; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 6px; display: none; }
+        .result pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; }
+        .error { color: #dc3545; padding: 10px; background: #f8d7da; border-radius: 4px; }
+        .badge { background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Skills Extraction <span class="badge">TESTING ONLY</span></h1>
+        
+        <form id="skillsForm">
+            <div class="form-group">
+                <label for="title">Job Title *</label>
+                <input type="text" id="title" required placeholder="e.g., Senior Python Developer">
+            </div>
+            
+            <div class="form-group">
+                <label for="company">Company</label>
+                <input type="text" id="company" placeholder="e.g., Tech Corp">
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" placeholder="e.g., Remote, New York">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Job Description *</label>
+                <textarea id="description" required placeholder="Paste the full job description here..."></textarea>
+            </div>
+            
+            <button type="submit">🚀 Extract Skills</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('skillsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                title: document.getElementById('title').value.trim(),
+                company: document.getElementById('company').value.trim() || null,
+                location: document.getElementById('location').value.trim() || null,
+                description: document.getElementById('description').value.trim()
+            };
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div style="color: #007bff;">⏳ Processing...</div>';
+
+            try {
+                const response = await fetch('/api/v1/skills/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>✅ Results</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>

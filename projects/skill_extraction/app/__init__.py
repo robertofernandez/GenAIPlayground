@@ -1,0 +1,1 @@
+"""Skill extraction service package."""
