@@ -435,12 +435,7 @@ Esta separación permitirá evolucionar cada componente independientemente y esc
 
 -----
 
-
-Me parece una mejora importante. Estás separando dos situaciones que tienen distinta naturaleza y, sobre todo, distintos niveles de confianza sobre el origen del contenido.
-
-También agregás algo interesante desde el punto de vista de ML Engineering: la posibilidad de comparar sistemáticamente un modelo entrenado con una API de LLM como evaluador alternativo. Esto nos permitirá estudiar diferencias entre modelos especializados y modelos fundacionales.
-
-Mantendría intacta la documentación anterior y aplicaría únicamente los siguientes cambios.
+Agregamos la posibilidad de comparar sistemáticamente un modelo entrenado con una API de LLM como evaluador alternativo. Esto nos permitirá estudiar diferencias entre modelos especializados y modelos fundacionales.
 
 # 1. Nuevo diseño de los endpoints
 
@@ -780,3 +775,32 @@ Con suficientes ejemplos podremos responder preguntas interesantes:
 - ¿Podemos reemplazarlo por un clasificador propio más económico?
 
 Esto es muy relevante para un puesto de AI Platform: no se trata solamente de consumir modelos, sino de medirlos, compararlos y decidir dónde conviene utilizar cada uno.
+
+----
+
+                    ┌──────────────────────────┐
+                    │ labeled-reviews          │
+                    │ text + real stars        │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                          training dataset
+                                 │
+                                 ▼
+                         Rating Regressor
+                                 │
+             ┌───────────────────┴──────────────────┐
+             │                                      │
+             ▼                                      ▼
+   /predictions/reviews                  /predictions/content
+   review ya verificada                 contenido incierto
+             │                                      │
+             │                              LLM classification
+             │                              + estimated rating
+             │                                      │
+             │                           is_review == true
+             │                                      │
+             └──────────────────────┬───────────────┘
+                                    ▼
+                              Rating Regressor
+

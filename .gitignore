@@ -216,3 +216,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+/projects/ReviewSense/review_sense_experiments/data/raw/yelp_academic_dataset_review.json
+/projects/ReviewSense/review_sense_experiments/data/raw/yelp_academic_dataset_business.json
